@@ -1,0 +1,3 @@
+/home/yzy/myworkspace/learn/Computer Graphics/GAMES101 Assignments/Assignment1/code/build/CMakeFiles/Rasterizer.dir
+/home/yzy/myworkspace/learn/Computer Graphics/GAMES101 Assignments/Assignment1/code/build/CMakeFiles/edit_cache.dir
+/home/yzy/myworkspace/learn/Computer Graphics/GAMES101 Assignments/Assignment1/code/build/CMakeFiles/rebuild_cache.dir

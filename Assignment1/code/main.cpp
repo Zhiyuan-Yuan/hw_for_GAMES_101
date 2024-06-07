@@ -19,6 +19,21 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
     return view;
 }
 
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle)
+{
+    Eigen::Matrix4f Rotation = Eigen::Matrix4f::Identity();
+    axis.normalize();
+    angle = angle * M_PI / 180;
+    //求axis的反对称矩阵
+    Matrix3f n;
+    n << 0, -axis(2), axis(1),
+        axis(2), 0, -axis(0),
+        -axis(1), axis(0), 0;
+    //由罗德里格斯公式求绕任意轴旋转任意角的变换矩阵
+    Rotation.block(0, 0, 3, 3) = cos(angle) * Eigen::Matrix3f::Identity() + (1 - cos(angle)) * axis * axis.transpose() + sin(angle) * n;
+    return Rotation;
+}
+
 Eigen::Matrix4f get_model_matrix(float rotation_angle)
 {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
@@ -49,15 +64,16 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
         0, 0, zNear + zFar, -zNear * zFar,
         0, 0, 1, 0;
 
+
     Matrix4f M_ortho;
-    float height = zNear * tan(eye_fov / 2 / 180 * MY_PI);
+    float height = -zNear * tan(eye_fov / 2 / 180 * MY_PI);
     float width = height * aspect_ratio;
     M_ortho << 2 / width, 0, 0, 0,
         0, 2 / height, 0, 0,
         0, 0, 2 / (zNear - zFar), -(zNear + zFar) / 2,
         0, 0, 0, 1;
 
-    projection = M_ortho * M_persp_to_ortho;
+    projection = M_ortho * M_persp_to_ortho * projection;
 
     return projection;
 }
@@ -97,7 +113,7 @@ int main(int argc, const char** argv)
 
         r.set_model(get_model_matrix(angle));
         r.set_view(get_view_matrix(eye_pos));
-        r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
+        r.set_projection(get_projection_matrix(45, 1, -0.1, -50));
 
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
         cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
@@ -111,14 +127,19 @@ int main(int argc, const char** argv)
     while (key != 27) {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 
-        r.set_model(get_model_matrix(angle));
+        //r.set_model(get_model_matrix(angle));
+        //绕任意轴旋转
+        Vector3f rotate_axis;
+        rotate_axis << 1, 0, 0;
+        r.set_model(get_rotation(rotate_axis, angle));
         r.set_view(get_view_matrix(eye_pos));
-        r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
+        r.set_projection(get_projection_matrix(45, 1, -0.1, -50));
 
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
 
         cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
         image.convertTo(image, CV_8UC3, 1.0f);
+        cv::namedWindow("image", 0);
         cv::imshow("image", image);
         key = cv::waitKey(10);
 
