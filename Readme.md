@@ -8,7 +8,7 @@
 
 <div align="left">
 
-### Assignment 2
+### Assignment2
 
 > upsample 2X
 
