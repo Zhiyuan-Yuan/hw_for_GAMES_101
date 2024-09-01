@@ -8,7 +8,7 @@
 
 > upsample 2X
 
-<img src="./Assignment2/figure/image.png" alt="image-20240901201329635" style="zoom:135%;" />
+<img src="./Assignment2/figure/image.png" alt="image-20240901201329635"/>
 
 
 
