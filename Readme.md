@@ -2,6 +2,8 @@
 
 ### Assignment1
 
+<div align="center">
+
 <img src="./Assignment1/figure/image.png" alt="image" height="500" width="700"/>
 
 ### Assignment 2
