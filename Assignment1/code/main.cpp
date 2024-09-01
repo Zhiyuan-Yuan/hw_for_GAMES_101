@@ -66,7 +66,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
 
 
     Matrix4f M_ortho;
-    float height = -zNear * tan(eye_fov / 2 / 180 * MY_PI);
+    float height = -zNear * tan(eye_fov / 2 / 180 * MY_PI) * 2;
     float width = height * aspect_ratio;
     M_ortho << 2 / width, 0, 0, 0,
         0, 2 / height, 0, 0,
