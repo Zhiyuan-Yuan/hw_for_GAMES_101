@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(Rasterizer)
 
+set(OPENCV_DIR /home/yzy/3rdparty/opencv-3.4.8)
 find_package(OpenCV REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)

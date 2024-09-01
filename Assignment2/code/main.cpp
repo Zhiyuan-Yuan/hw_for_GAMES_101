@@ -1,4 +1,7 @@
-// clang-format off
+//
+// Created by yzy on 8/31/24.
+//
+// ReSharper disable All
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "rasterizer.hpp"
@@ -25,6 +28,10 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 Eigen::Matrix4f get_model_matrix(float rotation_angle)
 {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
+    float degree2rad = MY_PI / (float)180;
+    model.block(0, 0, 2, 2) << cos(rotation_angle * degree2rad), -sin(rotation_angle * degree2rad),
+                               sin(rotation_angle * degree2rad), cos(rotation_angle * degree2rad);
+
     return model;
 }
 
@@ -32,6 +39,21 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
 {
     // TODO: Copy-paste your implementation from the previous assignment.
     Eigen::Matrix4f projection;
+    Matrix4f M_persp_to_ortho;
+    M_persp_to_ortho << zNear, 0, 0, 0,
+        0, zNear, 0, 0,
+        0, 0, zNear + zFar, -zNear * zFar,
+        0, 0, 1, 0;
+
+    Matrix4f M_ortho;
+    float height = -zNear * tan(eye_fov / 2 / 180.0 * MY_PI) * 2;
+    float width = height * aspect_ratio;
+    M_ortho << 2 / width, 0, 0, 0,
+        0, 2 / height, 0, 0,
+        0, 0, 2 / (zNear - zFar), -(zNear + zFar) / 2,
+        0, 0, 0, 1;
+
+    projection = M_ortho * M_persp_to_ortho * projection;
 
     return projection;
 }
@@ -119,10 +141,14 @@ int main(int argc, const char** argv)
         cv::cvtColor(image, image, cv::COLOR_RGB2BGR);
         cv::imshow("image", image);
         key = cv::waitKey(10);
-
         std::cout << "frame count: " << frame_count++ << '\n';
+        if (key == 'a') {
+            angle += 10;
+        }
+        else if (key == 'd') {
+            angle -= 10;
+        }
     }
-
     return 0;
 }
 // clang-format on
